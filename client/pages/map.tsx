@@ -5,19 +5,45 @@ type Props = {}
 const Map = (props: Props) => {
 	const sectionHeightWidth = 10;
 	const [mapData, setMapData] = useState<{ grid: [][] }>({ grid: [] })
-	const userData = {
+	const [userData, setUserData] = useState({
 		x: 50,
 		y: 20,
-	}
+	});
 	useEffect(() => {
 		const client = new Colyseus.Client('ws://localhost:2567');
 		client.joinOrCreate('my_room').then((room) => {
 			room.onMessage('generated_map', (message) => {
-				console.log(message);
 				setMapData(message)
 			})
 		})
 	}, [])
+
+	useEffect(() => {
+		//	TEST
+		const keyListener = (event) => {
+			let udCopy = { ...userData };
+			switch (event.code) {
+				case 'ArrowDown': // down
+					++udCopy.x;
+					break;
+				case 'ArrowLeft': // left
+					--udCopy.y;
+					break;
+				case 'ArrowRight': // right
+					++udCopy.y;
+					break;
+				case 'ArrowUp': // up
+					--udCopy.x;
+					break;
+			}
+			console.log(udCopy)
+			setUserData({
+				...udCopy
+			})
+		};
+		document.addEventListener("keyup", keyListener)
+		return () => { document.removeEventListener('keyup', keyListener) }
+	}, [userData])
 
 	return (
 		<div id="mapid">
