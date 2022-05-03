@@ -1,26 +1,20 @@
 import { chunk } from 'lodash';
-interface IMap {
-	grid: Array<IMapSection[]>
-}
-interface IMapSection {
-	hex: string
-}
-export const generateMap = (): Promise<IMap> => {
+import { Map, Zone } from '../rooms/schema/WorldState';
+
+export const generateMap = (): Promise<Map> => {
 	return new Promise((resolve, reject) => {
 		const getPixels = require("get-pixels");
-		let mapData: IMap = {
-			grid: null
-		};
+		const mapData = new Map()
 		getPixels("map.png", (err: any, pixels: any) => {
 			if (err) {
 				return;
 			}
-			let c = chunk(pixels.data, 4).map((group: any) => {
-				return {
-					hex: ConvertRGBtoHex(group[0], group[1], group[2])
-				} as IMapSection;
+			const zones = chunk(pixels.data, 4).map((group: any) => {
+				let zone = new Zone();
+				zone.hexColor = ConvertRGBtoHex(group[0], group[1], group[2]);
+				return zone;
 			})
-			mapData.grid = chunk(c, 46);
+			mapData.grid = chunk(zones, 46);
 			resolve(mapData)
 		});
 	})
@@ -33,4 +27,3 @@ function ColorToHex(color: number) {
 function ConvertRGBtoHex(red: number, green: number, blue: number) {
 	return "#" + ColorToHex(red) + ColorToHex(green) + ColorToHex(blue);
 }
-console.log(ConvertRGBtoHex(255, 100, 200));
