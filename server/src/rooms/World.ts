@@ -1,4 +1,5 @@
 import { Room, Client } from "colyseus";
+import { PlayerMove } from "../models/controls.mode";
 import { World } from "./schema/WorldState";
 
 export class MyRoom extends Room<World> {
@@ -6,19 +7,15 @@ export class MyRoom extends Room<World> {
   async onCreate(options: any) {
     this.setState(new World());
     await this.state.createWorld();
-    //this.state.assign({mapData: generateMap()})
-    this.onMessage("type", (client, message) => {
-      //
-      // handle "type" message
-      //
+    this.onMessage("player_move", (client, message: PlayerMove) => {
+      this.state.movePlayer(client.sessionId, message);
     });
   }
 
   onJoin(client: Client, options: any) {
     console.log(client.sessionId, "joined!");
-    //console.log(this.state.mapData)
     this.broadcast('generated_map', this.state.getWorld());
-
+    this.state.createPlayer(client.sessionId)
   }
 
   onLeave(client: Client, consented: boolean) {

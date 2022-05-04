@@ -1,5 +1,7 @@
 import { Schema, MapSchema, Context, type } from "@colyseus/schema";
+import { PlayerMove } from "../../models/controls.mode";
 import { generateMap } from "../../services/map.service";
+import { Player } from "./PlayerState";
 
 export class Zone extends Schema {
   @type('string') hexColor: string;
@@ -8,6 +10,7 @@ export class Map extends Schema {
   @type([Zone]) grid: Zone[][];
 }
 export class World extends Schema {
+  @type({ map: Player }) players = new MapSchema<Player>();
   @type(Map) mapData: Map;
   world = new MapSchema<World>();
   async createWorld() {
@@ -19,4 +22,29 @@ export class World extends Schema {
   getWorld() {
     return this.world.get("main").mapData;
   }
+  createPlayer(sessionId: string) {
+    this.players.set(sessionId, new Player());
+  }
+  removePlayer(sessionId: string) {
+    this.players.delete(sessionId);
+  }
+  movePlayer(sessionId: string, movement: PlayerMove) {
+    const player = this.players.get(sessionId);
+    switch (movement) {
+      case PlayerMove.ARROW_DOWN: // down
+        ++player.x;
+        break;
+      case PlayerMove.ARROW_LEFT: // left
+        --player.y;
+        break;
+      case PlayerMove.ARROW_RIGHT: // right
+        ++player.y;
+        break;
+      case PlayerMove.ARROW_UP: // up
+        --player.x;
+        break;
+    }
+  }
 }
+
+
