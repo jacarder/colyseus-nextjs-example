@@ -3,28 +3,31 @@ import * as Colyseus from "colyseus.js"
 import { usePlayerListeners } from "../hooks/usePlayerListeners";
 import { Room } from "colyseus.js";
 import { MapSection } from "../models/mapSection.model";
+import { Player } from "../models/player.model";
 
 type Props = {}
 
 const client = new Colyseus.Client('ws://localhost:2567');
 type MapSectionProps = {
-	sectionIndex: number,
+	sectionId: string,
 	section: MapSection,
-	isPlayerCharacter?: boolean,
-	isPlayer?: boolean
+	hasPlayerCharacter?: boolean,
+	hasPlayer?: boolean,
+	playerId?: string
 }
 const MapSection = ({
 	section,
-	sectionIndex,
-	isPlayerCharacter,
-	isPlayer
+	sectionId,
+	hasPlayerCharacter,
+	hasPlayer,
+	playerId
 }: MapSectionProps) => {
 	const sectionHeightWidth = 10;
 	return (
 		<div
-			key={`section-${sectionIndex}`}
+			key={`${hasPlayer || hasPlayerCharacter ? playerId : 'section'}-${sectionId}`}
 			style={{
-				backgroundColor: isPlayerCharacter ? '#ff0000' : isPlayer ? '#0000ff' : section.hexColor,
+				backgroundColor: hasPlayerCharacter ? '#ff0000' : hasPlayer ? '#0000ff' : section.hexColor,
 				height: `${sectionHeightWidth}px`,
 				width: `${sectionHeightWidth}px`
 			}}></div>
@@ -58,6 +61,9 @@ const Map = (props: Props) => {
 		const isFound = Object.keys(players || {}).find(key => players[key].location.x === rowIndex && players[key].location.y === sectionIndex);
 		return !!isFound;
 	}
+	const getPlayerIdByRowSection = (rowIndex: number, sectionIndex: number) => {
+		return Object.keys(players || {}).find(key => players[key].location.x === rowIndex && players[key].location.y === sectionIndex)
+	}
 	return (
 		<div id="mapid">
 			{Object.keys(players || {}).length || 1}
@@ -68,15 +74,15 @@ const Map = (props: Props) => {
 							{
 								rowIndex === playerCharacter?.location?.x && sectionIndex === playerCharacter?.location?.y ?
 									(
-										<MapSection sectionIndex={sectionIndex} section={section} isPlayerCharacter />
+										<MapSection key={`${rowIndex}-${sectionIndex}-test`} sectionId={`${rowIndex}-${sectionIndex}`} section={section} hasPlayerCharacter playerId={getPlayerIdByRowSection(rowIndex, sectionIndex)} />
 									)
 									: isPlayerLocated(rowIndex, sectionIndex) ?
 										(
-											<MapSection sectionIndex={sectionIndex} section={section} isPlayer />
+											<MapSection sectionId={`${rowIndex}-${sectionIndex}`} section={section} hasPlayer playerId={getPlayerIdByRowSection(rowIndex, sectionIndex)} />
 										)
 										:
 										(
-											<MapSection sectionIndex={sectionIndex} section={section} />
+											<MapSection sectionId={`${rowIndex}-${sectionIndex}`} section={section} />
 										)
 							}
 						</>

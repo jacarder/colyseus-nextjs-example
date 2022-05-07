@@ -8,6 +8,7 @@ export const usePlayerListeners = (room) => {
 	const handleListenToPlayers = useCallback(
 		(room) => {
 			room.state.players.onAdd = (player, key) => {
+				setPlayers(state => ({ ...state, [key]: player }))
 				if (key === room.sessionId) {
 					player.location.listen('x', (c, p) => {
 						setPlayerCharacter(state => ({
@@ -38,6 +39,16 @@ export const usePlayerListeners = (room) => {
 						})
 					}
 				}
+			}
+			room.state.players.onRemove = (player, key) => {
+				console.log("removed")
+				setPlayers(state => {
+					const stateCopy = { ...state };
+					delete stateCopy[key]
+					return {
+						...stateCopy
+					}
+				})
 			}
 		},
 		[],
