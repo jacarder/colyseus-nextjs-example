@@ -2,66 +2,11 @@ import { useEffect, useState } from "react"
 import * as Colyseus from "colyseus.js"
 import { usePlayerListeners } from "../hooks/usePlayerListeners";
 import { Room } from "colyseus.js";
-import { MapSection } from "../models/mapSection.model";
-import { Player } from "../models/player.model";
+import MapSection from "../components/MapSection/MapSection";
 
 type Props = {}
 
 const client = new Colyseus.Client('ws://localhost:2567');
-type MapSectionProps = {
-	sectionId: string,
-	section: MapSection,
-	hasPlayerCharacter?: boolean,
-	hasPlayer?: boolean,
-	playerId?: string
-}
-const MapSection = ({
-	section,
-	sectionId,
-	hasPlayerCharacter,
-	hasPlayer,
-	playerId
-}: MapSectionProps) => {
-	const sectionHeightWidth = 10;
-	const id = `${hasPlayer || hasPlayerCharacter ? playerId : 'section'}-${sectionId}`
-	const playerBackgroundColor = hasPlayerCharacter ? '#ff0000' : hasPlayer ? '#0000ff' : section.hexColor;
-	const adjustColor = (color, amount) => {
-		return '#' + color.replace(/^#/, '').replace(/../g, color => ('0' + Math.min(255, Math.max(0, parseInt(color, 16) + amount)).toString(16)).substr(-2));
-	}
-	return (
-		<div
-			key={id}
-			style={{
-				backgroundColor: section.hexColor,
-				height: `${sectionHeightWidth}px`,
-				width: `${sectionHeightWidth}px`,
-				display: "grid",
-				justifyContent: "center",
-				alignItems: "center"
-			}}>
-			{
-				hasPlayerCharacter || hasPlayer ?
-					(
-						<div id={id} style={{
-							backgroundColor: adjustColor(playerBackgroundColor, -10),
-							height: `${sectionHeightWidth / 1.3}px`,
-							width: `${sectionHeightWidth / 1.3}px`,
-							borderRadius: '10px'
-						}}></div>
-					)
-					:
-					(
-						<div id={id} style={{
-							backgroundColor: adjustColor(section.hexColor, 10),
-							height: `${sectionHeightWidth / 1.2}px`,
-							width: `${sectionHeightWidth / 1.2}px`
-						}}></div>
-					)
-			}
-
-		</div>
-	)
-}
 const Map = (props: Props) => {
 
 	const [mapData, setMapData] = useState<{ grid: [][] }>({ grid: [] })

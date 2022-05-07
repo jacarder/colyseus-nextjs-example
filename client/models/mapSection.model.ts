@@ -1,3 +1,3 @@
-export interface MapSection {
+export interface IMapSectionInfo {
 	hexColor: string
 }
