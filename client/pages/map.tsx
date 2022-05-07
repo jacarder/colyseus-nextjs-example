@@ -55,12 +55,12 @@ const Map = (props: Props) => {
 	}, [])
 
 	const isPlayerLocated = (rowIndex: number, sectionIndex: number) => {
-		const isFound = Object.keys(players).find(key => players[key].location.x === rowIndex && players[key].location.y === sectionIndex);
+		const isFound = Object.keys(players || {}).find(key => players[key].location.x === rowIndex && players[key].location.y === sectionIndex);
 		return !!isFound;
 	}
 	return (
 		<div id="mapid">
-			{players ? Object.keys(players).length : 0}
+			{Object.keys(players || {}).length || 1}
 			{mapData.grid.map((row: any, rowIndex: number) =>
 				<div key={`row-${rowIndex}`} style={{ display: 'flex' }}>
 					{row.map((section: any, sectionIndex: number) =>
