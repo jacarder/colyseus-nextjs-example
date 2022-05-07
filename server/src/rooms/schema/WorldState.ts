@@ -32,16 +32,16 @@ export class World extends Schema {
     const player = this.players.get(sessionId);
     switch (movement) {
       case PlayerMove.ARROW_DOWN: // down
-        ++player.x;
+        ++player.location.x;
         break;
       case PlayerMove.ARROW_LEFT: // left
-        --player.y;
+        --player.location.y;
         break;
       case PlayerMove.ARROW_RIGHT: // right
-        ++player.y;
+        ++player.location.y;
         break;
       case PlayerMove.ARROW_UP: // up
-        --player.x;
+        --player.location.x;
         break;
     }
   }
