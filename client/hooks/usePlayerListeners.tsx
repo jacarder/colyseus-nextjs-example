@@ -4,7 +4,7 @@ import { Players } from "../models/players.model"
 
 export const usePlayerListeners = (room) => {
 	const [playerCharacter, setPlayerCharacter] = useState<Player>()
-	const [players, setPlayers] = useState<Players[]>([])
+	const [players, setPlayers] = useState<Players>()
 	const handleListenToPlayers = useCallback(
 		(room) => {
 			room.state.players.onAdd = (player, key) => {

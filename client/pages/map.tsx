@@ -2,12 +2,36 @@ import { useEffect, useState } from "react"
 import * as Colyseus from "colyseus.js"
 import { usePlayerListeners } from "../hooks/usePlayerListeners";
 import { Room } from "colyseus.js";
+import { MapSection } from "../models/mapSection.model";
 
 type Props = {}
 
 const client = new Colyseus.Client('ws://localhost:2567');
-const Map = (props: Props) => {
+type MapSectionProps = {
+	sectionIndex: number,
+	section: MapSection,
+	isPlayerCharacter?: boolean,
+	isPlayer?: boolean
+}
+const MapSection = ({
+	section,
+	sectionIndex,
+	isPlayerCharacter,
+	isPlayer
+}: MapSectionProps) => {
 	const sectionHeightWidth = 10;
+	return (
+		<div
+			key={`section-${sectionIndex}`}
+			style={{
+				backgroundColor: isPlayerCharacter ? '#ff0000' : isPlayer ? '#0000ff' : section.hexColor,
+				height: `${sectionHeightWidth}px`,
+				width: `${sectionHeightWidth}px`
+			}}></div>
+	)
+}
+const Map = (props: Props) => {
+
 	const [mapData, setMapData] = useState<{ grid: [][] }>({ grid: [] })
 	const [room, setRoom] = useState<Room<unknown>>();
 	const [playerCharacter, players] = usePlayerListeners(room)
@@ -36,6 +60,7 @@ const Map = (props: Props) => {
 	}
 	return (
 		<div id="mapid">
+			{players ? Object.keys(players).length : 0}
 			{mapData.grid.map((row: any, rowIndex: number) =>
 				<div key={`row-${rowIndex}`} style={{ display: 'flex' }}>
 					{row.map((section: any, sectionIndex: number) =>
@@ -43,33 +68,15 @@ const Map = (props: Props) => {
 							{
 								rowIndex === playerCharacter?.location?.x && sectionIndex === playerCharacter?.location?.y ?
 									(
-										<div
-											key={`user-${sectionIndex}`}
-											style={{
-												backgroundColor: '#ff0000',
-												height: `${sectionHeightWidth}px`,
-												width: `${sectionHeightWidth}px`
-											}}></div>
+										<MapSection sectionIndex={sectionIndex} section={section} isPlayerCharacter />
 									)
 									: isPlayerLocated(rowIndex, sectionIndex) ?
 										(
-											<div
-												key={`player-${sectionIndex}`}
-												style={{
-													backgroundColor: '#0000ff',
-													height: `${sectionHeightWidth}px`,
-													width: `${sectionHeightWidth}px`
-												}}></div>
+											<MapSection sectionIndex={sectionIndex} section={section} isPlayer />
 										)
 										:
 										(
-											<div
-												key={`section-${sectionIndex}`}
-												style={{
-													backgroundColor: section.hexColor,
-													height: `${sectionHeightWidth}px`,
-													width: `${sectionHeightWidth}px`
-												}}></div>
+											<MapSection sectionIndex={sectionIndex} section={section} />
 										)
 							}
 						</>
