@@ -7,7 +7,7 @@ import { IMapSectionInfo } from "../models/mapSection.model";
 
 type Props = {}
 
-const client = new Colyseus.Client('ws://localhost:2567');
+const client = new Colyseus.Client('wss://qs6pnm.colyseus.dev');
 const Map = (props: Props) => {
 	const maxSize: { x: number, y: number } = { x: 20, y: 20 }
 	const [mapData, setMapData] = useState<{ grid: [][] }>({ grid: [] })
@@ -25,6 +25,7 @@ const Map = (props: Props) => {
 		let isMounted = true;
 		const joinOrCreate = async () => {
 			if (isMounted) {
+				console.log(client)
 				setRoom(await client.joinOrCreate('my_room'));
 			}
 		}
