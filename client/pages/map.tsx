@@ -18,6 +18,9 @@ const Map = (props: Props) => {
 			room.onMessage('generated_map', (message) => {
 				setMapData(message)
 			})
+			room.onError((error) => {
+				console.log(error)
+			})
 		}
 	}, [room])
 
@@ -25,7 +28,6 @@ const Map = (props: Props) => {
 		let isMounted = true;
 		const joinOrCreate = async () => {
 			if (isMounted) {
-				console.log(client)
 				setRoom(await client.joinOrCreate('my_room'));
 			}
 		}
