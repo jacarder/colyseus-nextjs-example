@@ -7,7 +7,8 @@ import { IMapSectionInfo } from "../models/mapSection.model";
 
 type Props = {}
 // prod backend	'wss://qs6pnm.colyseus.dev'
-const client = new Colyseus.Client('ws://localhost:2567');
+const host = process.env.NODE_ENV == "development" ? 'ws://localhost:2567' : 'wss://qs6pnm.colyseus.dev'
+const client = new Colyseus.Client(host);
 const Map = (props: Props) => {
 	const maxSize: { x: number, y: number } = { x: 20, y: 20 }
 	const [mapData, setMapData] = useState<{ grid: [][] }>({ grid: [] })
