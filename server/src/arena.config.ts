@@ -1,5 +1,6 @@
 import Arena from "@colyseus/arena";
 import { monitor } from "@colyseus/monitor";
+import { uWebSocketsTransport } from "@colyseus/uwebsockets-transport/build/uWebSocketsTransport";
 
 /**
  * Import your Room files
@@ -8,6 +9,10 @@ import { MyRoom } from "./rooms/World";
 
 export default Arena({
     getId: () => "Your Colyseus App",
+
+    initializeTransport: (options) => {
+        return new uWebSocketsTransport(options);
+    },
 
     initializeGameServer: (gameServer) => {
         /**

@@ -1,13 +1,15 @@
 import { chunk } from 'lodash';
+import path from 'path';
 import { Map, Zone } from '../rooms/schema/WorldState';
 
 export const generateMap = (): Promise<Map> => {
 	return new Promise((resolve, reject) => {
 		const getPixels = require("get-pixels");
 		const mapData = new Map()
-		getPixels("map.png", (err: any, pixels: any) => {
+		getPixels(path.join(__dirname, '..', 'assets', 'map.png'), (err: any, pixels: any) => {
+			console.log(path.join(__dirname, '..', 'assets', 'map.png'), err)
 			if (err) {
-				return;
+				reject();
 			}
 			const zones = chunk(pixels.data, 4).map((group: any) => {
 				let zone = new Zone();

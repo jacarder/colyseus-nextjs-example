@@ -6,10 +6,14 @@ export class MyRoom extends Room<World> {
 
   async onCreate(options: any) {
     this.setState(new World());
-    await this.state.createWorld();
-    this.onMessage("player_move", (client, message: PlayerMove) => {
-      this.state.movePlayer(client.sessionId, message);
-    });
+    try {
+      await this.state.createWorld();
+      this.onMessage("player_move", (client, message: PlayerMove) => {
+        this.state.movePlayer(client.sessionId, message);
+      });
+    } catch (error) {
+      console.log(error)
+    }
   }
 
   onJoin(client: Client, options: any) {

@@ -14,10 +14,17 @@ export class World extends Schema {
   @type(Map) mapData: Map;
   world = new MapSchema<World>();
   async createWorld() {
-    const map = await generateMap();
-    let newWorld = new World();
-    newWorld.mapData = map;
-    this.world.set("main", newWorld)
+    try {
+      const map = await generateMap();
+      if (!map) {
+        throw Error("Error generating map");
+      }
+      let newWorld = new World();
+      newWorld.mapData = map;
+      this.world.set("main", newWorld)
+    } catch (error) {
+      console.log(error)
+    }
   }
   getWorld() {
     return this.world.get("main").mapData;
